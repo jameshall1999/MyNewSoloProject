@@ -2,43 +2,63 @@ import flask, uuid
 from flask import request, render_template, flash, url_for, redirect, abort, Response
 
 
+
 #---------------------------------------------------------
-
 class Member:
-
-    Memberlist = []
-    Testlist = []
 
     def __init__(self, firstname, lastname, role):
         self.firstname = firstname
         self.lastname = lastname
         self.email = firstname + "." + lastname + "@email.com"
         self.role = role
-        self.fulldetails = "Name: " + firstname + " " + lastname + " " + "Email: " +  self.email + " " + "Role: " + role
-        Member.Memberlist.append(self.fulldetails) 
-        Member.Testlist.append("Fistname: " + self.firstname)
-        Member.Testlist.append("Lastname: " + self.lastname)
-        Member.Testlist.append("Email: " + self.email)
-        Member.Testlist.append("Job role: " + self.role)
-        Member.Testlist.append(" ------------------------------------------------")
 
-dev1 = Member("John", "Marston", "manager")
-dev2 = Member("Arthur", "Morgan", "Programmer")
-dev3 = Member("Mrs", "Graphics", "Graphic designer")
-dev4 = Member("Everyday", "Joe", "Accounts")
+class MembersList:
+
+    def __init__(self):
+        self.members = []
+
+    def add_member(self, firstname, lastname, role):
+        self.members.append(Member(firstname, lastname, role))  
+
+    def display_members(self):
+        displayList = []
+        for member in self.members:
+            displayList.append("Fistname: " + member.firstname)
+            displayList.append("Lastname: " + member.lastname)
+            displayList.append("Email: " + member.email)
+            displayList.append("Job role: " + member.role)
+            displayList.append(" ------------------------------------------------")
+        return displayList
+
 #---------------------------------------------------------
 
 app = flask.Flask(__name__)
+members_list = MembersList()
+
+members_list.add_member("John", "Marston", "manager")
+members_list.add_member("Arthur", "Morgan", "Programmer")
+members_list.add_member("Mrs", "Graphics", "Graphic designer")
+members_list.add_member("Everyday", "Joe", "Accounts")
 
 @app.route('/', methods=['GET'])
 def home():
-    teamlist = Member.Memberlist
-    mytestlist = Member.Testlist
-    return render_template('main.html', teamlist = teamlist, mytestlist = mytestlist)
+    return render_template('main.html', displayList = members_list.display_members())
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.route('/add')
+def my_form():
+    return render_template('formpage.html')
+
+@app.route('/add', methods=['POST'])
+def my_form_post():
+    firstname = request.form['formFirstname']
+    lastname = request.form['formLastname']
+    role = request.form['formRole']
+    members_list.add_member(firstname, lastname, role)
+    return "success"
 
 app.config['SECRET_KEY'] = 'any secret string'
 if __name__ == '__main__':

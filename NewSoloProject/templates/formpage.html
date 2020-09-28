@@ -9,13 +9,16 @@
 
 <body>
 
-<h1> Your Team </h1>
+<h1> Add a team member </h1>
 
 <br><br><br>
-{% for your_list_element in displayList %}
-<p>{{ your_list_element }}</p>
-{% endfor %}
-<br><br>
-  
+
+<form method="POST">
+    <input name="formLastname" placeholder="First Name">
+    <input name="formFirstname" placeholder="Last Name">
+    <input name="formRole" placeholder="Role">
+    <input type="submit">
+</form>
+
 </body>
 </html>
