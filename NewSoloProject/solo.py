@@ -3,7 +3,8 @@ from flask import request, render_template, flash, url_for, redirect, abort, Res
 
 
 
-#---------------------------------------------------------
+#-----------------------------------------------------------------------------------
+
 class Member:
 
     def __init__(self, firstname, lastname, role):
@@ -18,7 +19,11 @@ class MembersList:
         self.members = []
 
     def add_member(self, firstname, lastname, role):
-        self.members.append(Member(firstname, lastname, role))  
+        self.members.append(Member(firstname, lastname, role)) 
+
+    def remove_member(self, Rfirstname, Rlastname, Rrole):
+        remove_from_list = next(d for d in self.members if d.firstname == Rfirstname and d.lastname == Rlastname and d.role == Rrole)
+        self.members.remove(remove_from_list)   
 
     def display_members(self):
         displayList = []
@@ -28,9 +33,11 @@ class MembersList:
             displayList.append("Email: " + member.email)
             displayList.append("Job role: " + member.role)
             displayList.append(" ------------------------------------------------")
+            location = self
         return displayList
+    
 
-#---------------------------------------------------------
+#-------------------------------------------------------------------------------------
 
 app = flask.Flask(__name__)
 members_list = MembersList()
@@ -58,6 +65,18 @@ def my_form_post():
     lastname = request.form['formLastname']
     role = request.form['formRole']
     members_list.add_member(firstname, lastname, role)
+    return "success"
+
+@app.route('/del')
+def my_del_form():
+    return render_template('delformpage.html')
+
+@app.route('/del', methods=['POST'])
+def my_form_del():
+    Rfirstname = request.form['delformFirstname']
+    Rlastname = request.form['delformLastname']
+    Rrole = request.form['delformRole']
+    members_list.remove_member(Rfirstname, Rlastname, Rrole)
     return "success"
 
 app.config['SECRET_KEY'] = 'any secret string'
