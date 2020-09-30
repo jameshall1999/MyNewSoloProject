@@ -73,11 +73,14 @@ def my_del_form():
 
 @app.route('/del', methods=['POST'])
 def my_form_del():
-    Rfirstname = request.form['delformFirstname']
-    Rlastname = request.form['delformLastname']
-    Rrole = request.form['delformRole']
-    members_list.remove_member(Rfirstname, Rlastname, Rrole)
-    return "success"
+    try:
+        Rfirstname = request.form['delformFirstname']
+        Rlastname = request.form['delformLastname']
+        Rrole = request.form['delformRole']
+        members_list.remove_member(Rfirstname, Rlastname, Rrole)
+        return "success"
+    except:
+        return "Could not find member"
 
 app.config['SECRET_KEY'] = 'any secret string'
 if __name__ == '__main__':
